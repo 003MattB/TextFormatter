@@ -1,6 +1,9 @@
 =head1 NAME
-TextFormatter.pm - 
+
+TextFormatter.pm 
+
 =head1 SYNOPSIS
+
      use TextFormatter;
      my $formatter = TextFormatter->new();
      my $origText = "some long string of text";
@@ -10,23 +13,44 @@ TextFormatter.pm -
      ##some long 
      ##string of 
      ##   text  
-=head2 METHODS
+
+=head2 METHODS 
+
 =over 12
+
 =item C<new>
-returns a new TextFormatter object
+
+I<new()>
+
+Returns a new TextFormatter object.
+
 =item C<wrapLine>
-takes two parameters B<< text => 'some text' >> and B<< width => int >>
-wraps a string of text by words to a max length of width
-returns the wrapped string
+
+I<< wrapLine(text => 'some text', width => integer) >>
+
+Takes two parameters B<'some text'> and B<width>.
+Wraps a string of text by words to a max length of width.
+Returns the wrapped string.
+
 =item C<formatText>
-takes a 4 parameters B<< text => 'some text' >> , B<< width => int >>, B<< align => 'left'|'right'|'center' >>, and B<< newline => 1|0 >>
-returns text wrapped by words aligned by the parameter
-B<align> and B<newline> may be omitted, if so align will default to 'center' and newline will default to 0
-if newline = 1 then a newline character will be apended to the end of the string
+
+I<< formatText(text => 'some text', width => integer, align => 'left'|'right'|'center' newline => 0|1) >>
+
+Takes 4 parameters B<text> , B<width>, B<align>, and B<newline>.
+Returns text wrapped by words aligned by the parameter.
+B<align> and B<newline> may be omitted, if so align will default to 'center' and newline will default to 0.
+If newline = 1 then a newline character will be apended to the end of the string.
+
+=back
+
 =head1 DEPENDENCIES
+
 Carp
+
 =head1 AUTHOR
+
 Matt Bundy (mattb@protechmn.com)
+
 =cut
 
 package TextFormatter;
