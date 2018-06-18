@@ -26,7 +26,7 @@ use base "TextFormatter";
 
 sub new {
 #constructor
-#required parameters rows=>#rows, cols=>#columns
+#required parameters rows=>#rows, cols=>#columns width => int
      my $class = shift;
      my $self = {@_};
      bless $self, $class;
@@ -36,7 +36,8 @@ sub new {
      $self->{'_colWidth'} = floor($self->{'width'} / $self->{'cols'});
      #initialize the table with empty strings
      for (my $i = 1; $i <= $self->{'cols'}; $i++){
-          $self->{'_headers'}{$i} = '';
+          $self->{'_headers'}{$i}{'text'} = '';
+          $self->{'_headers'}{$i}{'align'} = 'center';
           for (my $j = 1; $j <= $self->{'rows'}; $j++){
                $self->{'_cellData'}{$i}{$j}{'text'} = '';
                $self->{'_cellData'}{$i}{$j}{'align'} = 'left';
@@ -73,10 +74,11 @@ sub getTitle {
 sub setHeader {
 #sets the header for the given column
 #required parameters
-#col | text
+#col | text | align
      my $self = shift;
      my %params = @_;
-     
+     $self->{'_headers'}{$params{'col'}}{'align'} = defined $params{'align'} ? $params{'align'} : 'center';
+     $self->{'_headers'}{$params{'col'}}{'text'} = defined $params{'text'} ? $params{'text'} : '';
 }
 
 sub setCell {
@@ -112,9 +114,22 @@ sub getCellFormat {
 sub getTable {
 #returns the table as a scalar
      my $self = shift;
-     $self->_normalize();
      my $table = '';
      my @data;
+     my @headers;
+     #prep the headers for flattening;
+     for (my $row = 1; $row <= 1; $row++){
+          my @cols;
+          for(my $col = 1; $col <= $self->{'cols'}; $col++){
+               my @cell = split(/\n/,$self->SUPER::formatText(text => $self->{'_headers'}{$col}{'text'},
+                                                              width => $self->{'_colWidth'},
+                                                              align => $self->{'_headers'}{$col}{'align'}));
+
+               push (@cols,[@cell]);
+          }
+          push(@headers,[@cols]);
+     }
+     #prep the rest of the table for flattening
      for (my $row = 1; $row <= $self->{'rows'}; $row++){
           my @cols;
           for(my $col = 1; $col <= $self->{'cols'}; $col++){
@@ -126,7 +141,8 @@ sub getTable {
           }
           push(@data,[@cols]);
      }
-     $table = $self->_flatten(@data);
+     $table .= $self->_flatten(@headers);
+     $table .= $self->_flatten(@data);
      return $table;
 }
 
@@ -150,16 +166,27 @@ sub _normalize{
      }
 }
 
+
 sub _flatten {
 #flattens the array into a scalar
      my $self = shift;
      my @data = @_;
      my $table = '';
      foreach my $row (@data){
-          my $num = scalar(@{$row->[0]});
+          my $num = 0;
+          foreach (@{$row}){
+               $num = scalar(@{$_}) if (scalar(@{$_}) > $num);
+          }
           for (my $i = 0; $i < $num; $i++){
                foreach my $col (@{$row}){
-                    $table .= $col->[$i] .' ';
+                    my $text;
+                    if (defined $col->[$i]){
+                         $text = $col->[$i];
+                         $text =~ s/\n+$//g;
+                    }else{
+                         $text = ' 'x$self->{'_colWidth'};
+                    }
+                    $table .= $text .' ';
                }
                $table .= "\n";
           }
