@@ -134,7 +134,7 @@ B<TextFormatter> for inherited methods.
 
 =head1 AUTHOR
 
-Matt Bundy (mattb@protechmn.com)
+Matt Bundy 
 
 =cut
 
