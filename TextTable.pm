@@ -9,7 +9,7 @@ TextTable.pm -
 Carp
 TextFormatter
 =head1 AUTHOR
-Matt Bundy (mattb@protechmn.com)
+Matt Bundy 
 =cut
 
 package TextTable;
